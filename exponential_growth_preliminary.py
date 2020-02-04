@@ -20,7 +20,7 @@ time = np.linspace(0,endtime,50)
 
 def f(X,time):
     Pop = X[0]
-    dPop = Pop*(photosynth-resp-graze)
+    dPop = Pop*(photosynth-resp-graze) #Riley, Gordon A. "Factors controlling phytoplankton populations on Georges Bank." J. mar. Res 6.1 (1946): 54-73.
     return([dPop])
 
 Initial_condition = 20 #g carbon
