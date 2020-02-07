@@ -31,5 +31,5 @@ EndPop = [vector[0] for vector in hab_solution]
 plt.figure()
 plt.plot(time,EndPop)
 plt.xlabel("time (hours)")
-plt.ylabel("Number of cells")
+plt.ylabel("Phytoplankton (Grams of Carbon)")
 plt.title("Exponential HAB growth")
