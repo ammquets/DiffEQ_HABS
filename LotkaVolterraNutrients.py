@@ -12,6 +12,8 @@ from scipy.integrate import odeint #odeint = ordinary diffEq integrater
 # Stuff to change **************
 nut_growth = 0.1*(random.randint(2, 8)) #growth rate of nutrients - how do we add a delay?
 phyto_uptake = 0.7 #rate of plankton nutrient uptake, needs to be larger than nutrient accumulation
+## (pctNut*P)/TotalNutrients this is a calculation which probably gives a changing nutrient uptake rate depending on 
+# the amount of phytoplankton. pctNut is a number like .25 which means that each phyto needs .25 nutrient units during the timestep
 phyto_growth = 0.8 #propogation rate of phytopkankton when there are nutrients
 phyto_death = 0.8 #rate of death aside from nutrient limitation and grazing - like what?b
 zoo_predation = 0.5 #predation by copepods
