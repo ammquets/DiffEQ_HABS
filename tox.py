@@ -6,6 +6,11 @@ Created on Fri Feb 21 14:59:48 2020
 """
 
 '''
+This is meant to incorporate toxins according to source (see below)
+parameters are all pretty made up but the functions are real
+except that we made up the function that represents ToxIn
+It's a good approximation though. except that we don't have a clue what c (aka l) is. 
+
 source: https://www.researchgate.net/publication/237183674_Controls_on_Domoic_Acid_Production_by_the_Diatom_Nitzschia_pungens_f_multiseries_in_Culture_Nutrients_and_Irradance
 '''
 
@@ -107,7 +112,6 @@ plt.plot(T,N,label="Nitrate", color = 'navy')
 plt.plot(T,Si,label="Silicate", color = 'orange')
 plt.plot(T,Phyto,label="Harmful Algae", color = 'green')
 plt.plot(T, Tox, label = "Cellular Toxins", color = 'red')
-#plt.hlines(xmin= 0, xmax = 50, y=0)
 plt.ylabel("Amount")
 plt.xlabel("Time t")
 plt.legend(loc=7)
