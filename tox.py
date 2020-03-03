@@ -12,7 +12,17 @@ except that we made up the function that represents ToxIn
 It's a good approximation though. except that we don't have a clue what c (aka l) is. 
 
 source: https://www.researchgate.net/publication/237183674_Controls_on_Domoic_Acid_Production_by_the_Diatom_Nitzschia_pungens_f_multiseries_in_Culture_Nutrients_and_Irradance
+
+Things  to do:
+    code an eulers method
+    figure out what to do with ToxIn:
+        should it be s-shaped or 7
+        is x supposed to be Tox or Phyto
+        should it still be mulitplied by Phyto
+    figure out units
+    this doesn't take predation into account, unless we assume it is included in carrying capacity. which it very well may be. but this really doesn't have anything cyclic about it unlike the lotka volterra stuff that we had before
 '''
+
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -20,9 +30,9 @@ from scipy.integrate import odeint #odeint = ordinary diffEq integrater
 
 
 # Stuff to change **************
-a = 7
-b = 2
-c = 50000
+a = 7 #for the s-shaped ToxIn function
+b = 2 #for the s-shaped ToxIn function
+c = 50000 #for the s-shaped ToxIn function
 '''
 ToxIn = 7 #how fast the toxin is produced could replace with function r*((k^x)/((k^x)+l)) -> where k = 2; r = 7; l = ? but somewhere between 10,000 and 100,000
 ''' 
@@ -74,13 +84,13 @@ def f(X, t):
         dN = NIn -NOut*Phyto
         dSi = SiIn
         dPhyto = 0
-        dTox = -Tox*ToxOut*Phyto +2*a*((b**Tox)/((b**Tox)+c))*Phyto #ToxIn multiplied by 2 because energy isn't going to growth
+        dTox = -Tox*ToxOut*Phyto +2*a*((b**Phyto)/((b**Phyto)+c))*Phyto #ToxIn multiplied by 2 because energy isn't going to growth
         dNutRatio = -NutRatio + N/Si #trying to reset this for each new iteration
     if NutRatio >= 8: #growth and DA at this threshold
         dN = NIn -2*NOut*Phyto #NOut mutiplied by 2 because it is being used for growth and DA production at same time
         dSi = SiIn -SiOut*Phyto
         dPhyto = r*Phyto*(1-(Phyto/K))
-        dTox = -Tox*ToxOut*Phyto +a*((b**Tox)/((b**Tox)+c))*Phyto
+        dTox = -Tox*ToxOut*Phyto +a*((b**Phyto)/((b**Phyto)+c))*Phyto
         dNutRatio = -NutRatio + N/Si #trying to reset this for each new iteration
     if NutRatio < 8: #growth byt no DA below this threshold
         dN = NIn -NOut*Phyto
@@ -112,6 +122,7 @@ plt.plot(T,N,label="Nitrate", color = 'navy')
 plt.plot(T,Si,label="Silicate", color = 'orange')
 plt.plot(T,Phyto,label="Harmful Algae", color = 'green')
 plt.plot(T, Tox, label = "Cellular Toxins", color = 'red')
+#plt.hlines(xmin= 0, xmax = 50, y=0)
 plt.ylabel("Amount")
 plt.xlabel("Time t")
 plt.legend(loc=7)
