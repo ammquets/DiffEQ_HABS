@@ -14,7 +14,7 @@ It's a good approximation though. except that we don't have a clue what c (aka l
 source: https://www.researchgate.net/publication/237183674_Controls_on_Domoic_Acid_Production_by_the_Diatom_Nitzschia_pungens_f_multiseries_in_Culture_Nutrients_and_Irradance
 
 Things  to do:
-    code an eulers method
+    code an eulers method, this is good because each euler step should really be equal to the next because of assumptions in the functions
     figure out what to do with ToxIn:
         should it be s-shaped or 7
         is x supposed to be Tox or Phyto
@@ -23,11 +23,9 @@ Things  to do:
     this doesn't take predation into account, unless we assume it is included in carrying capacity. which it very well may be. but this really doesn't have anything cyclic about it unlike the lotka volterra stuff that we had before
 '''
 
-
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.integrate import odeint #odeint = ordinary diffEq integrater 
-
 
 # Stuff to change **************
 a = 7 #for the s-shaped ToxIn function
@@ -56,7 +54,6 @@ Si = []
 NutRatio = []
 Phyto = []
 Tox = []
-
 
 def f(X, t):
     N = X[0]
@@ -100,14 +97,11 @@ def f(X, t):
         dNutRatio = -NutRatio + N/Si #trying to reset this for each new iteration
     return( [dN, dSi, dNutRatio, dPhyto, dTox] )
 
-
 T = np.linspace(0,EndTime,NumPoints)
-
 
 InitialCondition = [N0, Si0, NutRatio0, Phyto0, Tox0]
 
 TOX_solution = odeint(f, InitialCondition, T)
-
 
 N = [i[0] for i in TOX_solution] 
 Si = [i[1] for i in TOX_solution]
@@ -115,14 +109,11 @@ NutRatio = [i[2] for i in TOX_solution]
 Phyto = [i[3] for i in TOX_solution]
 Tox = [i[4] for i in TOX_solution]
 
-
-
 plt.figure(1)
 plt.plot(T,N,label="Nitrate", color = 'navy')
 plt.plot(T,Si,label="Silicate", color = 'orange')
 plt.plot(T,Phyto,label="Harmful Algae", color = 'green')
 plt.plot(T, Tox, label = "Cellular Toxins", color = 'red')
-#plt.hlines(xmin= 0, xmax = 50, y=0)
 plt.ylabel("Amount")
 plt.xlabel("Time t")
 plt.legend(loc=7)
