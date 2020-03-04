@@ -23,98 +23,133 @@ Things  to do:
     this doesn't take predation into account, unless we assume it is included in carrying capacity. which it very well may be. but this really doesn't have anything cyclic about it unlike the lotka volterra stuff that we had before
 '''
 
-import numpy as np
 import matplotlib.pyplot as plt
-from scipy.integrate import odeint #odeint = ordinary diffEq integrater 
 
-# Stuff to change **************
+#parameters
 a = 7 #for the s-shaped ToxIn function
 b = 2 #for the s-shaped ToxIn function
 c = 50000 #for the s-shaped ToxIn function
-'''
-ToxIn = 7 #how fast the toxin is produced could replace with function r*((k^x)/((k^x)+l)) -> where k = 2; r = 7; l = ? but somewhere between 10,000 and 100,000
-''' 
+
+ToxIn = 7 #how fast the toxin is produced could replace with function r*((k^x)/((k^x)+l)) -> where k = 2; r = 7; l = ? but somewhere between 10,000 and 100,000 
 ToxOut = .5 #how fast the toxin leaves the cell
-SiIn = 50 #rate of silicate input
+SiIn = 200 #rate of silicate input
 SiOut = 1 #rate of use for growth
-NIn = 400 #rate of nitrate input
+NIn = 1000 #rate of nitrate input
 NOut = 4 #rate of use for growth or toxin. if both at once, multiply by 2 or something
 r = 2
 K = 200
-EndTime = 20 #how far to run for
-Tox0 = 1 #starting toxicity
-Phyto0 = 50 #starting num phyto
-N0 = 400 #starting amt nitrogen
-Si0 = 100 #starting amt silicate
-NutRatio0 = N0/Si0
-NumPoints = 1000
 
-N = []
-Si = []
-NutRatio = []
-Phyto = []
-Tox = []
+#initial conditions
+Tox = 0 #starting toxicity
+Phyto = 50 #starting num phyto
+N = 400 #starting amt nitrogen
+Si = 100 #starting amt silicate
+NutRatio = N/Si
 
-def f(X, t):
-    N = X[0]
-    Si = X[1] 
-    NutRatio = X[2]
-    Phyto = X[3]
-    Tox = X[4]
-    ''' 
+
+#euler's stuff
+timestep = 0 #starting step
+deltat = 0.1
+n = 100 #num steps
+
+#initialize some lists
+time_list = []
+N_list = []
+Si_list = []
+NutRatio_list = []
+Phyto_list = []
+Tox_list = []
+
+for i in range(n):
+    
     if Si < 0: #these are safeguards in case anything tries to go negative
         Si = 1
+        print("Si safeguard triggered")
     if N < 0:
         N = 0
+        print("N safeguard triggered")
     if Phyto < 0:
         Phyto = 0
+        print("Phyto safeguard triggered")
     if Tox < 0:
         Tox = 0
-     '''  
+        print("Tox safeguard triggered")
+      
     if N == 0: #limiting condition, no nitrate means no growth and no DA
         dN = NIn
         dSi = SiIn
         dPhyto = 0
-        dTox = -Tox*ToxOut*Phyto
-        dNutRatio = -NutRatio + N/Si #trying to reset this for each new iteration because this shouldn't really be a DiffEQ
+        dTox = -Tox*ToxOut
+        dNutRatio = -NutRatio + N/Si #trying to reset this for each new iteration because this shouldn't really be a DiffEQ, could probably do this in the loop instead now, but I"m not sure how that'll go. leaving it like this for the moment. 
+        temp_results = [dN, dSi, dNutRatio, dPhyto, dTox]
+        print("first if statement ran")
     if Si == 0: #limiting condition, no silicate means no growth but can still produce DA because of nitrate
         dN = NIn -NOut*Phyto
         dSi = SiIn
         dPhyto = 0
-        dTox = -Tox*ToxOut*Phyto +2*a*((b**Phyto)/((b**Phyto)+c))*Phyto #ToxIn multiplied by 2 because energy isn't going to growth
+        dTox = -Tox*ToxOut +2*ToxIn*Phyto #ToxIn multiplied by 2 because energy isn't going to growth
         dNutRatio = -NutRatio + N/Si #trying to reset this for each new iteration
-    if NutRatio >= 8: #growth and DA at this threshold
+        temp_results = [dN, dSi, dNutRatio, dPhyto, dTox]
+        print("second if statement ran")
+    if NutRatio >= 8: #growth and DA at this threshold    
         dN = NIn -2*NOut*Phyto #NOut mutiplied by 2 because it is being used for growth and DA production at same time
         dSi = SiIn -SiOut*Phyto
         dPhyto = r*Phyto*(1-(Phyto/K))
-        dTox = -Tox*ToxOut*Phyto +a*((b**Phyto)/((b**Phyto)+c))*Phyto
+        dTox = -Tox*ToxOut +ToxIn*Phyto
         dNutRatio = -NutRatio + N/Si #trying to reset this for each new iteration
-    if NutRatio < 8: #growth byt no DA below this threshold
+        temp_results = [dN, dSi, dNutRatio, dPhyto, dTox]
+        print("third if statement ran")
+    if NutRatio < 8: #growth but no DA below this threshold
         dN = NIn -NOut*Phyto
         dSi = SiIn -SiOut*Phyto
         dPhyto = r*Phyto*(1-(Phyto/K))
-        dTox = -Tox*ToxOut*Phyto
+        dTox = -Tox*ToxOut
         dNutRatio = -NutRatio + N/Si #trying to reset this for each new iteration
-    return( [dN, dSi, dNutRatio, dPhyto, dTox] )
+        temp_results = [dN, dSi, dNutRatio, dPhyto, dTox]
+        print("fourth if statement ran")
+    
+    dN = temp_results[0]
+    dSi = temp_results[1] 
+    dNutRatio = temp_results[2]
+    dPhyto = temp_results[3]
+    dTox = temp_results[4]
 
-T = np.linspace(0,EndTime,NumPoints)
 
-InitialCondition = [N0, Si0, NutRatio0, Phyto0, Tox0]
+    time_list.append(timestep) #add previous time to list
+    N_list.append(N)
+    Si_list.append(Si)
+    NutRatio_list.append(NutRatio)
+    Phyto_list.append(Phyto)
+    Tox_list.append(Tox)
+    timestep = timestep+deltat
+    N = N + dN
+    Si = Si + dSi
+    NutRatio = NutRatio + dNutRatio #check this out
+    Phyto = Phyto + dPhyto
+    Tox = Tox + dTox
+    print("iteration number " + str(i) +" completed")
 
-TOX_solution = odeint(f, InitialCondition, T)
 
-N = [i[0] for i in TOX_solution] 
-Si = [i[1] for i in TOX_solution]
-NutRatio = [i[2] for i in TOX_solution]
-Phyto = [i[3] for i in TOX_solution]
-Tox = [i[4] for i in TOX_solution]
-
-plt.figure(1)
-plt.plot(T,N,label="Nitrate", color = 'navy')
-plt.plot(T,Si,label="Silicate", color = 'orange')
-plt.plot(T,Phyto,label="Harmful Algae", color = 'green')
-plt.plot(T, Tox, label = "Cellular Toxins", color = 'red')
+plt.figure()
+plt.plot(time_list,N_list,label="Nitrate", color = 'navy')
+plt.plot(time_list,Si_list,label="Silicate", color = 'orange')
+plt.plot(time_list,Phyto_list,label="Harmful Algae", color = 'green')
+plt.plot(time_list,Tox_list, label = "Cellular Toxins", color = 'red')
 plt.ylabel("Amount")
 plt.xlabel("Time t")
-plt.legend(loc=7)
+plt.legend(loc="best")
+plt.show()
+
+f2, axarr = plt.subplots(4, sharex=True)
+axarr[0].plot(time_list, N_list, color = 'navy')
+axarr[0].set_title('Nitrate')
+axarr[1].plot(time_list, Si_list, color = 'orange')
+axarr[1].set_title('Silicate')
+axarr[2].plot(time_list, Phyto_list,color = 'green')
+axarr[2].set_title('Harmful Algae')
+axarr[3].plot(time_list, Tox_list, color = 'red')
+axarr[3].set_title('Cellular Toxins')
+f2.tight_layout(pad=1.0)
+plt.ylabel("Amount")
+plt.xlabel("Time t")
 plt.show()
