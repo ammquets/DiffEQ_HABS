@@ -35,22 +35,19 @@ SiIn = 90 #rate of silicate input
 SiOut = 1 #rate of use for growth
 NIn = 1000 #rate of nitrate input
 NOut = 4 #rate of use for growth or toxin. if both at once, multiply by 2 or something
-#r = 2
-K = 200
+PhytoDeath = .7 #percent of phyto that die of natural causes each timstep
 
 #initial conditions
 Tox = 0 #starting toxicity
-Phyto = 50 #starting num phyto
+Phyto = 150 #starting num phyto
 N = 1000 #starting amt nitrate
 Si = 200 #starting amt silicate
 NutRatio = N/Si
-r = (N*Si)/4
-
 
 #euler's stuff
 timestep = 0 #starting step
 deltat = 0.01
-n = 100 #num steps
+n = 75 #num steps
 
 #initialize some lists
 time_list = []
@@ -64,6 +61,12 @@ def ToxIn(x): #how fast the toxin is produced could replace with function r*((k^
     return(a*(b**x)/((b**x)+c))
     #return(7)
 
+def PhytoGrowth(x):
+    #r = 2
+    r = (N*Si)/4
+    #K = 200
+    #return(r*x*(1-(x/K)))
+    return(Phyto*r)
 
 for i in range(n):
     
@@ -75,7 +78,9 @@ for i in range(n):
         print("N safeguard triggered")
     if Phyto <= 0:
         Phyto = 1
-        print("Phyto safeguard triggered")
+        print("Phyto min safeguard triggered")
+        Phyto = 100000000
+        print("Phyto max safeguard triggered")
     if Tox < 0:
         Tox = 0
         print("Tox safeguard triggered")
@@ -83,7 +88,7 @@ for i in range(n):
     if N == 0: #limiting condition, no nitrate means no growth and no DA
         dN = NIn
         dSi = SiIn
-        dPhyto = 0
+        dPhyto = -PhytoDeath*Phyto
         dTox = -Tox*ToxOut
         NutRatio = N/Si #trying to reset this for each new iteration because this shouldn't really be a DiffEQ
         temp_results = [dN, dSi, NutRatio, dPhyto, dTox]
@@ -91,7 +96,7 @@ for i in range(n):
     if Si == .00001: #limiting condition, no silicate means no growth but can still produce DA because of nitrate
         dN = NIn -NOut*Phyto
         dSi = SiIn
-        dPhyto = 0
+        dPhyto = -PhytoDeath*Phyto
         dTox = -Tox*ToxOut + 2*ToxIn(Tox)*Phyto #ToxIn multiplied by 2 because energy isn't going to growth
         NutRatio = N/Si #trying to reset this for each new iteration
         temp_results = [dN, dSi, NutRatio, dPhyto, dTox]
@@ -99,7 +104,7 @@ for i in range(n):
     if NutRatio >= 8: #growth and DA at this threshold    
         dN = NIn -2*NOut*Phyto #NOut mutiplied by 2 because it is being used for growth and DA production at same time
         dSi = SiIn -SiOut*Phyto
-        dPhyto = r*Phyto*(1-(Phyto/K))
+        dPhyto = PhytoGrowth(Phyto) -PhytoDeath*Phyto
         dTox = -Tox*ToxOut +ToxIn(Tox)*Phyto
         NutRatio = N/Si #trying to reset this for each new iteration
         temp_results = [dN, dSi, NutRatio, dPhyto, dTox]
@@ -107,7 +112,7 @@ for i in range(n):
     if NutRatio < 8: #growth but no DA below this threshold
         dN = NIn -NOut*Phyto
         dSi = SiIn -SiOut*Phyto
-        dPhyto = r*Phyto*(1-(Phyto/K))
+        dPhyto = PhytoGrowth(Phyto) -PhytoDeath*Phyto
         dTox = -Tox*ToxOut
         NutRatio = N/Si #trying to reset this for each new iteration
         temp_results = [dN, dSi, NutRatio, dPhyto, dTox]
@@ -119,7 +124,6 @@ for i in range(n):
     dPhyto = temp_results[3]
     dTox = temp_results[4]
 
-
     time_list.append(timestep) #add previous time to list
     N_list.append(N)
     Si_list.append(Si)
@@ -127,14 +131,12 @@ for i in range(n):
     Phyto_list.append(Phyto)
     Tox_list.append(Tox)
     timestep = timestep+deltat
-    r = (N*Si)/4
     N = N + dN
     Si = Si + dSi
     #NutRatio = NutRatio #check this out
     Phyto = Phyto + dPhyto
     Tox = Tox + dTox
     print("iteration number " + str(i) +" completed")
-
 
 plt.figure()
 plt.plot(time_list,N_list,label="Nitrate", color = 'navy')
