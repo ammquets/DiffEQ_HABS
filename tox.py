@@ -89,24 +89,7 @@ def PhytoGrowth(x):
                 return(Phyto*((N/minN)+1))
         if Si >= minSi:
             return(Phyto*((N/minN)+1)) 
-'''
-def PhytoGrowth(x): 
-    minN = Phyto*NOut
-    minSi = Phyto*SiOut
-    if N >= minN:
-        if Si >= minSi:
-            r = 2
-            return(Phyto*r)
-        else:
-            return(0)  # this really shouldn't be 0 because at least some growth should happen even if not max possible
-    else:
-        return(0) # this really shouldn't be 0 because at least some growth should happen even if not max possible
-    #r = 2
-    #r = (N*Si)/4 #redfield make sure that silicate time 16 is close to nitrate
-    #K = 200
-    #return(r*x*(1-(x/K)))
-    #return(Phyto*r)
-'''
+
 for i in range(n):
     print("iteration number " + str(i) +":")
     if Si <= 0: #these are safeguards in case anything tries to go negative
