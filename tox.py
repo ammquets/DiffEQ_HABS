@@ -24,9 +24,7 @@ Things  to do:
         NOut - how much nitrate is needed for growth (1 cell dividing into 2); how much nitrate is required to make toxins
         PhytoDeath - how fast do phyto die or get eaten
         NIn - how fast is nitrate added through river input etc
-        SiIn - how fast is silicate added through river input etc
-        
-        
+        SiIn - how fast is silicate added through river input etc     
 '''
 
 import matplotlib.pyplot as plt
@@ -66,6 +64,7 @@ Phyto_list = []
 Tox_list = []
 ToxCell_list = []
 
+#define functions
 def ToxIn(x): #how fast the toxin is produced could replace with function r*((k^x)/((k^x)+l)) -> where k = 2; r = 7; l = ? but somewhere between 10,000 and 100,000 
     return(a*(b**x)/((b**x)+c)) #x and y axis
     #return(7)
@@ -90,9 +89,13 @@ def PhytoGrowth(x):
         if Si >= minSi:
             return(Phyto*((N/minN)+1)) 
 
+#run loop
 for i in range(n):
+    
     print("iteration number " + str(i) +":")
-    if Si <= 0: #these are safeguards in case anything tries to go negative
+    
+    #safeguards in case anything tries to go negative
+    if Si <= 0: 
         Si = .00001
         print("\t Si safeguard triggered")
     if N < 0:
@@ -107,7 +110,8 @@ for i in range(n):
     if ToxCell < 0:
         ToxCell = 0
         print("\t ToxCell safeguard triggered")
-      
+    
+    #change values depending on nutrient conditions
     if N == 0:
         dN = NIn
         dSi = SiIn
@@ -154,6 +158,7 @@ for i in range(n):
         else:
             pass
     
+    # this might be redundant. See what happends if you comment this out
     dN = temp_results[0]
     dSi = temp_results[1] 
     NutRatio = temp_results[2]
@@ -161,14 +166,17 @@ for i in range(n):
     dTox = temp_results[4]
     dToxCell = temp_results[5]
 
-    time_list.append(timestep) #add previous to list
+    #append previous values to lists
+    time_list.append(timestep) 
     iteration_list.append(i)
     N_list.append(N)
     Si_list.append(Si)
-    NutRatio_list.append(NutRatio)
+    NutRatio_list.append(NutRatio) #this might be appending the new value instead of the old value. check into this
     Phyto_list.append(Phyto)
     Tox_list.append(Tox)
     ToxCell_list.append(ToxCell)
+    
+    #add the change value to each
     timestep = timestep+deltat
     N = N + dN
     Si = Si + dSi
@@ -177,7 +185,7 @@ for i in range(n):
     Tox = Tox + dTox
     ToxCell = ToxCell +dToxCell
     
-
+#plot on one graph
 plt.figure()
 plt.plot(iteration_list,N_list,label="Nitrate", color = 'navy')
 plt.plot(iteration_list,Si_list,label="Silicate", color = 'orange')
@@ -190,6 +198,7 @@ plt.xlabel("Time t")
 plt.legend(loc="best")
 plt.show()
 
+#plot in separate facets
 f2, axarr = plt.subplots(6, sharex=True)
 axarr[0].plot(iteration_list, N_list, color = 'navy')
 axarr[0].set_title('Nitrate')
