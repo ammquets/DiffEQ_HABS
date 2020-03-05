@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """
 Created on Fri Feb 21 14:59:48 2020
-
 @author: Andrea
 """
 
@@ -10,9 +9,7 @@ This is meant to incorporate toxins according to source (see below)
 parameters are all pretty made up but the functions are real
 except that we made up the function that represents ToxIn
 It's a good approximation though. except that we don't have a clue what c (aka l) is. 
-
 source: https://www.researchgate.net/publication/237183674_Controls_on_Domoic_Acid_Production_by_the_Diatom_Nitzschia_pungens_f_multiseries_in_Culture_Nutrients_and_Irradance
-
 Things  to do:
     figure out what to do with ToxIn: 
         should it be s-shaped or 7
@@ -54,7 +51,7 @@ timestep = 0 #starting step
 deltat = 0.01
 n = 50 #num steps
 
-#initialize some lists
+#initialize lists
 time_list = []
 iteration_list = []
 N_list = []
@@ -66,7 +63,7 @@ ToxCell_list = []
 
 #define functions
 def ToxIn(x): #how fast the toxin is produced could replace with function r*((k^x)/((k^x)+l)) -> where k = 2; r = 7; l = ? but somewhere between 10,000 and 100,000 
-    return(a*(b**x)/((b**x)+c)) #x and y axis
+    return(a*(b**x)/((b**x)+c)) # think about the x and y axis
     #return(7)
 
 def PhytoGrowth(x): 
@@ -89,7 +86,7 @@ def PhytoGrowth(x):
         if Si >= minSi:
             return(Phyto*((N/minN)+1)) 
 
-#run loop
+#loop through each timestep
 for i in range(n):
     
     print("iteration number " + str(i) +":")
@@ -118,8 +115,7 @@ for i in range(n):
         dPhyto = -PhytoDeath*Phyto
         dTox = -Tox*ToxOut
         dToxCell = -ToxCell*ToxOut
-        NutRatio = N/Si #trying to reset this for each new iteration because this shouldn't really be a DiffEQ
-        temp_results = [dN, dSi, NutRatio, dPhyto, dTox, dToxCell]
+        tempNutRatio = N/Si 
         print("\t first if statement ran")     
     if Si == .00001:
         if N>0: #limiting condition, no silicate means no growth but can still produce DA because of nitrate
@@ -128,8 +124,7 @@ for i in range(n):
             dPhyto = -PhytoDeath*Phyto
             dTox = -Tox*ToxOut + 2*ToxIn(ToxCell)*Phyto #ToxIn multiplied by 2 because energy isn't going to growth
             dToxCell = -ToxCell*ToxOut + 2*ToxIn(ToxCell)
-            NutRatio = N/Si #trying to reset this for each new iteration
-            temp_results = [dN, dSi, NutRatio, dPhyto, dTox, dToxCell]
+            tempNutRatio = N/Si
             print("\t second if statement ran")
         else:
             pass
@@ -140,8 +135,7 @@ for i in range(n):
             dPhyto = PhytoGrowth(Phyto) -PhytoDeath*Phyto
             dTox = -Tox*ToxOut + ToxIn(ToxCell)*Phyto
             dToxCell = -ToxCell*ToxOut + ToxIn(ToxCell)
-            NutRatio = N/Si #trying to reset this for each new iteration
-            temp_results = [dN, dSi, NutRatio, dPhyto, dTox, dToxCell]
+            tempNutRatio = N/Si 
             print("\t third if statement ran")
         else:
             pass
@@ -152,20 +146,11 @@ for i in range(n):
             dPhyto = PhytoGrowth(Phyto) -PhytoDeath*Phyto
             dTox = -Tox*ToxOut
             dToxCell = -ToxCell*ToxOut
-            NutRatio = N/Si #trying to reset this for each new iteration
-            temp_results = [dN, dSi, NutRatio, dPhyto, dTox, dToxCell]
+            tempNutRatio = N/Si 
             print("\t fourth if statement ran")
         else:
             pass
-    
-    # this might be redundant. See what happends if you comment this out
-    dN = temp_results[0]
-    dSi = temp_results[1] 
-    NutRatio = temp_results[2]
-    dPhyto = temp_results[3]
-    dTox = temp_results[4]
-    dToxCell = temp_results[5]
-
+   
     #append previous values to lists
     time_list.append(timestep) 
     iteration_list.append(i)
@@ -180,7 +165,7 @@ for i in range(n):
     timestep = timestep+deltat
     N = N + dN
     Si = Si + dSi
-    #NutRatio = NutRatio #check this out
+    NutRatio = tempNutRatio 
     Phyto = Phyto + dPhyto
     Tox = Tox + dTox
     ToxCell = ToxCell +dToxCell
