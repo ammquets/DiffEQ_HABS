@@ -7,14 +7,11 @@ Created on Fri Feb 21 14:59:48 2020
 '''
 This is meant to incorporate toxins according to source (see below)
 parameters are all pretty made up but the functions are real
-except that we made up the function that represents ToxIn
-It's a good approximation though. except that we don't have a clue what c (aka l) is. 
+
 source: https://www.researchgate.net/publication/237183674_Controls_on_Domoic_Acid_Production_by_the_Diatom_Nitzschia_pungens_f_multiseries_in_Culture_Nutrients_and_Irradance
+
 Things  to do:
-    figure out what to do with ToxIn: 
-        should it be s-shaped or 7
-        probably need to make up a new s-shaped function
-    figure out units
+    double check units
     figure out parameters that make sense biologically
         ToxOut -how fast DA leaves the cell
         SiOut - how much silicate is needed for growth (1 cell dividing into 2)
@@ -36,7 +33,7 @@ SiIn = 200 #rate of silicate input
 SiOut = 1 #rate of use for growth
 NIn = 2000 #rate of nitrate input
 NOut = 4 #rate of use for growth or toxin. if both at once, multiply by 2 or something
-PhytoDeath = .5 #percent of phyto that die of natural causes each timstep
+PhytoDeath = .5 #percent of phyto that die each timstep including via predation
 
 #initial conditions
 Tox = 0 #starting total toxicity
@@ -46,10 +43,10 @@ N = 1000 #starting amt nitrate
 Si = 200 #starting amt silicate
 NutRatio = N/Si
 
-#euler's stuff
+#euler stuff
 timestep = 0 #starting step
 deltat = 0.01
-n = 50 #num steps
+n = 20 #num steps
 
 #initialize lists
 time_list = []
@@ -60,11 +57,12 @@ NutRatio_list = []
 Phyto_list = []
 Tox_list = []
 ToxCell_list = []
+Condition_list = []
 
 #define functions
-def ToxIn(x): #how fast the toxin is produced could replace with function r*((k^x)/((k^x)+l)) -> where k = 2; r = 7; l = ? but somewhere between 10,000 and 100,000 
-    return(a*(b**x)/((b**x)+c)) # think about the x and y axis
-    #return(7)
+def ToxIn(x): 
+    return(a*(b**x)/((b**x)+c)) # x axis = current toxin level; y axis = toxin added 
+    #return(7) 
 
 def PhytoGrowth(x): 
     minN = Phyto*NOut
@@ -115,7 +113,8 @@ for i in range(n):
         dPhyto = -PhytoDeath*Phyto
         dTox = -Tox*ToxOut
         dToxCell = -ToxCell*ToxOut
-        tempNutRatio = N/Si 
+        tempNutRatio = N/Si
+        Condition = 1
         print("\t first if statement ran")     
     if Si == .00001:
         if N>0: #limiting condition, no silicate means no growth but can still produce DA because of nitrate
@@ -125,6 +124,7 @@ for i in range(n):
             dTox = -Tox*ToxOut + 2*ToxIn(ToxCell)*Phyto #ToxIn multiplied by 2 because energy isn't going to growth
             dToxCell = -ToxCell*ToxOut + 2*ToxIn(ToxCell)
             tempNutRatio = N/Si
+            Condition = 2
             print("\t second if statement ran")
         else:
             pass
@@ -136,6 +136,7 @@ for i in range(n):
             dTox = -Tox*ToxOut + ToxIn(ToxCell)*Phyto
             dToxCell = -ToxCell*ToxOut + ToxIn(ToxCell)
             tempNutRatio = N/Si 
+            Condition = 3
             print("\t third if statement ran")
         else:
             pass
@@ -147,6 +148,7 @@ for i in range(n):
             dTox = -Tox*ToxOut
             dToxCell = -ToxCell*ToxOut
             tempNutRatio = N/Si 
+            Condition = 4
             print("\t fourth if statement ran")
         else:
             pass
@@ -156,10 +158,11 @@ for i in range(n):
     iteration_list.append(i)
     N_list.append(N)
     Si_list.append(Si)
-    NutRatio_list.append(NutRatio) #this might be appending the new value instead of the old value. check into this
+    NutRatio_list.append(NutRatio) 
     Phyto_list.append(Phyto)
     Tox_list.append(Tox)
     ToxCell_list.append(ToxCell)
+    Condition_list.append(Condition) #where everything else is kinda operating on a time lag, this value is based on the current situation
     
     #add the change value to each
     timestep = timestep+deltat
@@ -169,6 +172,7 @@ for i in range(n):
     Phyto = Phyto + dPhyto
     Tox = Tox + dTox
     ToxCell = ToxCell +dToxCell
+
     
 #plot on one graph
 plt.figure()
@@ -184,7 +188,7 @@ plt.legend(loc="best")
 plt.show()
 
 #plot in separate facets
-f2, axarr = plt.subplots(6, sharex=True)
+f2, axarr = plt.subplots(7, sharex=True)
 axarr[0].plot(iteration_list, N_list, color = 'navy')
 axarr[0].set_title('Nitrate')
 axarr[1].plot(iteration_list, Si_list, color = 'orange')
@@ -197,6 +201,8 @@ axarr[4].plot(iteration_list, ToxCell_list, color = 'purple')
 axarr[4].set_title('Cellular Toxins')
 axarr[5].plot(iteration_list, NutRatio_list, color = 'black')
 axarr[5].set_title('Nutrient Ratio')
+axarr[6].plot(iteration_list, Condition_list, color = 'skyblue')
+axarr[6].set_title('Condition')
 f2.tight_layout(pad=1.0)
 plt.xlabel("Time t")
 plt.show()
