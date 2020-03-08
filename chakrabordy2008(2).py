@@ -33,52 +33,51 @@ temp_listP = []
 temp_listC = []
 
 step = 0 #this is starting time
-num_steps = 70000
+num_steps = 600000
 deltat = 0.001 #this is delta t
 
 
 # Stuff to change **************
-nut_growth = .2 #growth rate of nutrients 
-phyto_death = 0.3 #rate of death aside from nutrient limitation and grazing - like what?b
-zoo_predation = 0.1 #predation by copepods
-zoo_death = 0.7 #natural death rate of copepods regardless of phyto
-zoo_birth = 0.6 #propogation rate of copepods
-N = 50 #amount of nutrients 
-P = 30 #amount pf plankton
-C = 20 #number of copepods
-m1 = 0.001
-m_2 = 0.01
-nut_recycling = .001
-nut_recyclingZoo = .01
-dilution_loss = .02 #rate of nutrient loss
 
+ #rate of death aside from nutrient limitation and grazing - like what?b
+
+N = 0.25 #amount of nutrients 
+P = 0.05 #amount pf plankton
+C = 0.01 #number of copepods
 
 # ******************************
-half_saturation = .5
-half_sat2 = .7
-theta = .45 #make a function
-fp1 = 0.419 #just testing - should be the function below
+A = .01 #growth rate of nutrients 
+a1 = 0.2 #half saturation 1
+a2 = 0.2 #half saturation 2 
+a3 = 0.4 #half saturastion 3
+d = .01 #rate of nutrient loss
+d1 = 0.21 #phyto death
+d2 = 0.1 #zoo death
+d3 = .1 #nutrient recycling phyto
+d4 = .06 #nutrient recycling zoo
+rPhyto = 0.14
+rZoo = 0.05
+m1 = 0.6
+m2 = 0.6
+theta = .6 #make a function? Limiting conidition around .6
 
 
-def fP1(P): #not used right now!
-    return(P/(half_saturation + P))
+#def fP1(P): #not used right now!
+ #   return(P/(half_saturation + P))
     
 def fN(X, N, P, C):
     #N = X[0]
-    dN = (nut_growth - (dilution_loss * N) - ((m1*N*P)/(half_saturation + N)) + (nut_recycling * P) + (nut_recyclingZoo * C))
-
+    dN = (A - (d * N) - ((m1*N*P)/(a1 + N)) + (d3 * P) + (d4 * C))
     return(dN)
 
 def fP(X, N, P, C):
     #P = X[0]
-    dP = (((m1*N*P)/(half_saturation + N)) - phyto_death * P - (half_saturation * P * C)/(half_sat2 + P))
-
+    dP = (((rPhyto*P)+(m1*N*P)/(a1 + N)) - (d1 * P) - ((m2*P*C)/(a2 + P)))
     return(dP)
     
 def fC(X, N, P, C):
    # C = X[0]
-    dC = ((m_2 * P * C)/(half_sat2 + P) - (zoo_death * C) - (C * fP1(P)*theta))
- 
+    dC = ((rZoo * C) + (m2 * P * C)/(a2 + P) - (d2 * C) - ((theta*P*C)/(a3 + P)))
     return(dC)
 
 
