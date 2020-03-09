@@ -7,9 +7,7 @@ Created on Fri Feb 21 14:59:48 2020
 '''
 This is meant to incorporate toxins according to source (see below)
 parameters are all pretty made up but the functions are real
-
 source: https://www.researchgate.net/publication/237183674_Controls_on_Domoic_Acid_Production_by_the_Diatom_Nitzschia_pungens_f_multiseries_in_Culture_Nutrients_and_Irradance
-
 Things  to do:
     double check units
     figure out parameters that make sense biologically
@@ -28,9 +26,9 @@ b = 2 #for the s-shaped ToxIn function
 c = 5 #for the s-shaped ToxIn function
 
 ToxOut = .5 #how fast the toxin leaves the cell
-SiIn = 200 #rate of silicate input
+SiIn = 100 #rate of silicate input
 SiOut = 1 #rate of use for growth
-NIn = 8000 #rate of nitrate input
+NIn = 900 #rate of nitrate input
 NOut = 4 #rate of use for growth or toxin. if both at once, multiply by 2 or something
 PhytoDeath = .35 #percent of phyto that die each timstep via grazing; citation: https://www.researchgate.net/publication/231424278_Intrinsic_growth_and_microzooplankton_grazing_on_toxigenic_Pseudo-nitzschia_spp_diatoms_from_the_coastal_northeast_Pacific
 
@@ -71,14 +69,14 @@ Condition_list.append(Condition)
 
 #define functions
 def ToxIn(x): 
-    return(a*(b**x)/((b**x)+c)) # x axis = current toxin level; y axis = toxin added 
+    return((a*(b**x)/((b**x)+c)))# x axis = current toxin level; y axis = toxin added; this might need to be changed entirely new now that the timestep is smaller Idk if a,, b, and c need to change to accomodate that...
     #return(7) 
 
 def PhytoGrowth(x): 
     minN = x*NOut*deltat
     minSi = x*SiOut*deltat
-    #r = .45 #average irradiance conditions; time step is 1 day
-    r = .64 #high irradiance; time step is 1 day
+    r = .45 #average irradiance conditions; time step is 1 day
+    #r = .64 #high irradiance; time step is 1 day
     #r = .35 #low irradiance; time step is 1 day
     if N >= minN:
         if Si >= minSi: #if there is enough Si and N to do all the growing
@@ -113,7 +111,7 @@ for i in range(n):
         dSi = SiIn*deltat
         dPhyto = -PhytoDeath*Phyto*deltat
         dToxCell = (-(ToxCell*ToxOut) + ToxIn(ToxCell))*deltat
-        dTox = ((-Tox*ToxOut) + ToxIn(ToxCell)*(dPhyto +Phyto))*deltat #(dPhyto+Phyto) term is here because i want it to multiply by the current num phyto instead of the previous one
+        dTox = ((-Tox*ToxOut) + ToxIn(ToxCell)*(Phyto))*deltat 
         Condition = 2
         print("\t second if statement ran")
     if NutRatio > 7.999 and Si > .00001 and N !=0: #growth and DA at this threshold    
@@ -121,7 +119,7 @@ for i in range(n):
         dSi = (SiIn -(SiOut*Phyto))*deltat
         dPhyto = (PhytoGrowth(Phyto) -(PhytoDeath*Phyto))*deltat
         dToxCell = (-(ToxCell*ToxOut) + ToxIn(ToxCell))*deltat
-        dTox = ((-Tox*ToxOut) + (ToxIn(ToxCell)*(dPhyto+Phyto)))*deltat #(dPhyto+Phyto) term is here because i want it to multiply by the current num phyto instead of the previous one
+        dTox = ((-Tox*ToxOut) + (ToxIn(ToxCell)*(Phyto)))*deltat 
         Condition = 3
         print("\t third if statement ran")
     if NutRatio <= 7.999 and Si > .00001 and N != 0: #growth but no DA below this threshold
@@ -169,8 +167,8 @@ for i in range(n):
     Tox_list.append(Tox)
     ToxCell_list.append(ToxCell)
     Condition_list.append(Condition) 
-    
-'''   
+  
+'''
 #plot on one graph
 plt.figure(figsize=(9,9))
 plt.plot(iteration_list,N_list,label="Nitrate", color = 'navy')
