@@ -17,12 +17,12 @@ InitialNitrogen= 0.25
 
 
 # Set algorithm parameters
-Num = 16 # Number of elements in grid
+Num = 32 # Number of elements in grid
 # a = L/N We'll effectively take a = 1
 DeltaT= 1e-4 # Time step
-EndTime = 250
+EndTime = 600
 Steps = EndTime/DeltaT
-NumPlots = 20 # This is the number of plots that will be saved.  Be careful!
+NumPlots = 500 # This is the number of plots that will be saved.  Be careful!
 Directory = "TempFigs" # Name of Directory where plots will be saved.
 # If this directory doesn't already exist you might need to create it.
 
@@ -142,7 +142,7 @@ for step in range(int(Steps)):
     if (step%q == 0):
         print("I am making plot", f, "out of", NumPlots)
         plt.figure(f,figsize=(8,8))
-        plt.imshow(P,cmap="BuGn", origin="lower")
+        plt.imshow(P,cmap="BuGn", origin="lower", vmin = 0, vmax = 1.1)
         plt.title("Time = %.4fs"%(step*DeltaT))
         plt.colorbar()
         plt.savefig(Directory+"/temp."+str(f)+".png")
