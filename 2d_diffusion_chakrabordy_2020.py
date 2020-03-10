@@ -7,22 +7,23 @@
 import numpy as np
 import matplotlib.pylab as plt
 import random as rand
+import math
 
 # Set system parameters
 #L = 0.01 # length of system
-D = 0.0 # diffusivity
+D = 0.00001 # diffusivity
 
 
 InitialNitrogen= 0.25
 
 
 # Set algorithm parameters
-Num = 32 # Number of elements in grid
+Num = 25 # Number of elements in grid
 # a = L/N We'll effectively take a = 1
 DeltaT= 1e-4 # Time step
-EndTime = 600
+EndTime = 100
 Steps = EndTime/DeltaT
-NumPlots = 500 # This is the number of plots that will be saved.  Be careful!
+NumPlots = 25 # This is the number of plots that will be saved.  Be careful!
 Directory = "TempFigs" # Name of Directory where plots will be saved.
 # If this directory doesn't already exist you might need to create it.
 
@@ -47,7 +48,7 @@ R_New = np.empty((Num+1,Num+1),float)
 #R = 0.01 #initial number of copepods
 
 # ******************************
-A = .01 #growth rate of nutrients 
+A = .003 #growth rate of nutrients 
 a1 = 0.2 #half saturation 1
 a2 = 0.2 #half saturation 2 
 a3 = 0.4 #half saturastion 3
@@ -56,7 +57,7 @@ d1 = 0.21 #phyto death
 d2 = 0.1 #zoo death
 d3 = .1 #nutrient recycling phyto
 d4 = .06 #nutrient recycling zoo
-rPhyto = 0.14
+rPhyto = 0.0 #could change if it was a dino
 rZoo = 0.05
 m1 = 0.6
 m2 = 0.6
@@ -77,8 +78,13 @@ N = FixBCs(N)
 P = FixBCs(P)
 R = FixBCs(R)
 
+def season(X):
+    x = X % 365
+    result = ((0.7*math.sin(0.08 * x + 66.5)+1)*.01)
+    return result
+
 def dN(N, P, R):
-    dN = (A - (d * N) - ((m1*N*P)/(a1 + N)) + (d3 * P) + (d4 * R))
+    dN = (season(step*DeltaT) - (d * N) - ((m1*N*P)/(a1 + N)) + (d3 * P) + (d4 * R))
     return(dN)
 
 def dP(N, P, R):
@@ -142,8 +148,8 @@ for step in range(int(Steps)):
     if (step%q == 0):
         print("I am making plot", f, "out of", NumPlots)
         plt.figure(f,figsize=(8,8))
-        plt.imshow(P,cmap="BuGn", origin="lower", vmin = 0, vmax = 1.1)
-        plt.title("Time = %.4fs"%(step*DeltaT))
+        plt.imshow(P,cmap="BuGn", origin="lower", vmin = 0, vmax = 0.5)
+        plt.title("Time = %.4f days"%(step*DeltaT))
         plt.colorbar()
         plt.savefig(Directory+"/temp."+str(f)+".png")
         plt.close()
