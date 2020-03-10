@@ -33,7 +33,7 @@ temp_listP = []
 temp_listC = []
 
 step = 0 #this is starting time
-num_steps = 600000
+num_steps = 300000
 deltat = 0.001 #this is delta t
 
 
@@ -41,9 +41,9 @@ deltat = 0.001 #this is delta t
 
  #rate of death aside from nutrient limitation and grazing - like what?b
 
-N = 0.25 #amount of nutrients 
-P = 0.05 #amount pf plankton
-C = 0.01 #number of copepods
+N = 0.00001 #amount of nutrients , IC = 0.25
+P = 0.00001 #amount pf plankton
+C = 0.00001 #number of copepods
 
 # ******************************
 A = .01 #growth rate of nutrients 
@@ -55,11 +55,11 @@ d1 = 0.21 #phyto death
 d2 = 0.1 #zoo death
 d3 = .1 #nutrient recycling phyto
 d4 = .06 #nutrient recycling zoo
-rPhyto = 0.14
+rPhyto = 0.0 #0 for now but could change for another species
 rZoo = 0.05
 m1 = 0.6
 m2 = 0.6
-theta = .6 #make a function? Limiting conidition around .6
+theta = .19 #make a function? Limiting conidition around .6
 
 
 #def fP1(P): #not used right now!
@@ -95,11 +95,12 @@ for i in range(num_steps):
 
 fig1, ax1  = plt.subplots()
 
-ax1.set_xlabel('Time')
+ax1.set_xlabel('Time (days)')
 ax1.set_ylabel('Population')
-ax1.plot(time_list, temp_listN, 'b-o', linewidth = 1, markersize = 2)
-ax1.plot(time_list, temp_listP, 'g-o', linewidth = 1, markersize = 2)
-ax1.plot(time_list, temp_listC, 'r-o', linewidth = 1, markersize = 2)
+ax1.plot(time_list, temp_listN, label = 'Nutrients')
+ax1.plot(time_list, temp_listP, label = 'Phytoplankton')
+ax1.plot(time_list, temp_listC, linewidth = 1, label = 'Zooplankton')
+ax1.legend(loc = 'upper right')
 
 
 
