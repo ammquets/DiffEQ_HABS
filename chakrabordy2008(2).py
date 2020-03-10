@@ -23,6 +23,7 @@ Created on Tue Feb 25 14:52:19 2020
 
 import numpy as np
 import matplotlib.pyplot as plt
+import math
 import random
 
 
@@ -33,7 +34,7 @@ temp_listP = []
 temp_listC = []
 
 step = 0 #this is starting time
-num_steps = 300000
+num_steps = 365000
 deltat = 0.001 #this is delta t
 
 
@@ -41,15 +42,15 @@ deltat = 0.001 #this is delta t
 
  #rate of death aside from nutrient limitation and grazing - like what?b
 
-N = 0.00001 #amount of nutrients , IC = 0.25
-P = 0.00001 #amount pf plankton
-C = 0.00001 #number of copepods
+N = 0.25 #amount of nutrients , IC = 0.25
+P = 0.05 #amount pf plankton
+C = 0.01 #number of copepods
 
 # ******************************
 A = .01 #growth rate of nutrients 
 a1 = 0.2 #half saturation 1
 a2 = 0.2 #half saturation 2 
-a3 = 0.4 #half saturastion 3
+a3 = 0.2 #half saturastion 3
 d = .01 #rate of nutrient loss
 d1 = 0.21 #phyto death
 d2 = 0.1 #zoo death
@@ -64,10 +65,16 @@ theta = .19 #make a function? Limiting conidition around .6
 
 #def fP1(P): #not used right now!
  #   return(P/(half_saturation + P))
+ 
+def season(X):
+    x = X % 365
+    result = ((0.7*math.sin(0.08 * x + 66.5)+1)*.01)
+    return result
+    
     
 def fN(X, N, P, C):
     #N = X[0]
-    dN = (A - (d * N) - ((m1*N*P)/(a1 + N)) + (d3 * P) + (d4 * C))
+    dN = (season(time_list[-1]) - (d * N) - ((m1*N*P)/(a1 + N)) + (d3 * P) + (d4 * C))
     return(dN)
 
 def fP(X, N, P, C):
@@ -97,9 +104,9 @@ fig1, ax1  = plt.subplots()
 
 ax1.set_xlabel('Time (days)')
 ax1.set_ylabel('Population')
-ax1.plot(time_list, temp_listN, label = 'Nutrients')
-ax1.plot(time_list, temp_listP, label = 'Phytoplankton')
-ax1.plot(time_list, temp_listC, linewidth = 1, label = 'Zooplankton')
+ax1.plot(time_list, temp_listN, label = 'Nutrients', color = 'turquoise')
+ax1.plot(time_list, temp_listP, label = 'Phytoplankton', color = 'green')
+ax1.plot(time_list, temp_listC, linewidth = 1, label = 'Zooplankton', color = 'red')
 ax1.legend(loc = 'upper right')
 
 
