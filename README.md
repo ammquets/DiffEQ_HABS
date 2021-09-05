@@ -5,7 +5,7 @@
 
 
 file                              | owner
--------------------------------------------------
+----------------------------------|--------------
 2d_diffusion_chakrabordy_2020.py  | hallie00 
 CHATTOPADHYAY_eq1.py              | ammquets 
 LotkaVolterraNutrients.py         | hallie00
