@@ -1,7 +1,9 @@
 # Modeling Pseudo-nitzschia Blooms and Toxicity
 Hallie Arno and Andrea Quets
-/n15 March 2020
-\nCollege of the Atlantic
+
+15 March 2020
+
+College of the Atlantic
 
 ## Code Attribution
 file                              | owner
