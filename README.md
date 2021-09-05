@@ -5,6 +5,8 @@ Hallie Arno and Andrea Quets
 
 College of the Atlantic
 
+Differential Equations
+
 ## Code Attribution
 file                              | owner
 ----------------------------------|--------------
