@@ -1,3 +1,5 @@
+This repository has been archived. It is now read-only.
+
 # Modeling Pseudo-nitzschia Blooms and Toxicity
 Hallie Arno and Andrea Quets
 
