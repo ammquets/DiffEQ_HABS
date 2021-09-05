@@ -1,9 +1,9 @@
 # Modeling Pseudo-nitzschia Blooms and Toxicity
-###### Hallie Arno and Andrea Quets
-###### 15 March 2020
-###### College of the Atlantic
+Hallie Arno and Andrea Quets
+15 March 2020
+College of the Atlantic
 
-
+## Code Attribution
 file                              | owner
 ----------------------------------|--------------
 2d_diffusion_chakrabordy_2020.py  | hallie00 
@@ -14,10 +14,11 @@ exponential_growth_preliminary.py | ammquets
 strong_predation_preliminary.py   | ammquets
 tox.py                            | ammquets
 
-## Abstract
+## Background information and conclusions copied from our report
+### Abstract
 Harmful algae blooms (HABs) are dangerous to humans when consumed through a shellfish vector and have implications for aquatic ecosystems. Management efforts rely on effective prediction of HAB dynamics, including population size and the toxins they produce. We used simulated Pseudo-nitzschia using Euler’s method programs to predict these respective dynamics based on nutrient levels, ratios of silicate to nitrate, and initial phytoplankton and zooplankton population sizes. Our models reflect previous research showing that HAB frequency and size depends heavily on nutrient inflow and zooplankton predation, and that the toxin levels produced depend on reaching a minimum nitrate to silicate threshold. While we recognize that there are many interrelated factors that could influence blooms and were not able to model all of them, our results seem consistent with what we expected based on previous research and knowledge on the subject. 
 
-## Introduction
+### Introduction
 Algae blooms are naturally occurring phenomenon in aquatic ecosystems. They are caused by an influx of nutrients and usually increased levels of irradiance. In the Gulf of Maine (GoM), at the end of winter and the beginning of spring, light and nutrients become more available due to winter mixing and increased springtime runoff, which leads to increased nutrient availability. This leads to primary productivity, which serves as a base to the food web: zooplankton feed on phytoplankton and larger organisms feed on zooplankton. Abnormal nutrient inputs can cause algal blooms, and when this triggers blooms of harmful or toxin producing algae, bloom dynamics must be monitored closely to limit the impact on human health and livelihoods. 
 
 There are three primary harmful algae threats which currently exist in the GoM.  Alexandrium fundyense is a dinoflagellate which has previously been the primary harmful algae species of concern in the GoM. Alexandrium produces the neurotoxin saxitoxin which causes paralytic shellfish poisoning in humans. A second threat in the GoM is an alga called Dinophysis. Dinophysis produces a toxin called okadaic acid which causes diathetic shellfish poisoning in humans. Since about 2013 a new threat has emerged in the GoM: Pseudo-nitzschia spp (Fernandes, 2013). There are 52 species of Pseudo-nitzschia, 26 of which produce domoic acid (Bates, 2018). Domoic acid causes amnesiac shellfish poisoning. If a wayward person were to ingest too much of either saxitoxin or domoic acid, it could result in death, unless the individual is proactive about seeking hospitalization. This paper will focus on Pseudo-nitzschia because currently Pseudo-nitzschia is of the greatest concern currently in the GoM. 
@@ -38,7 +39,7 @@ Most of the factors that affect HAB dynamics reciprocally influence each other. 
 
 The two most basic factors used to predict HABs are the population (number of cells in the water) and toxin production (per cell). However, most of the factors that affect these two things reciprocally influence each other. For example, nutrients affect both the number of cells as well as the amount of toxin produced. Phytoplankton then take up these nutrients, which leads to a limiting factor on their population as well as a change in the toxin production.
 
-## Conclusion
+### Conclusion
 
 These models could be applied to predict how long a bloom will last if the managers knew factors such as the number of zooplankton and the nutrient inflow, which could be obtained from field surveys. The toxicity model is useful for determining toxin output based on nutrients. In a bloom scenario, resource managers could test parameters then use these models to estimate the length of the bloom (using the population model) and the amount of toxins produced (using the toxicity model). Together, these could give useful insight into the dynamics and severity of the bloom. 
 
@@ -50,7 +51,7 @@ An opportunity for future work on this project could involve adding an equation 
 
 Integrating the toxicity and population models would involve a reconciliation of units. When both models are using the same units, the phytoplankton differential equation in the toxicity model can be replaced with the system of differential equations from the population model. Assessing the behavior of the models compared to historical data would be integral, since these models both carry their own assumptions and amounts of error, and the combination of them may magnify that error. To protect against this, it would be necessary to test against real data. 
 
-## Citations
+### Citations
 Bates, S. S., Freitas, A. D., Milley, J. E., Pocklington, R., Quilliam, M. A., Smith, J. C., & 
 	Worms, J. (1991). Controls on domoic acid production by the diatom Nitzschia pungens f. 
 	multiseries in culture: nutrients and irradiance. Canadian Journal of Fisheries and 	
