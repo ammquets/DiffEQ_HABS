@@ -18,6 +18,8 @@ exponential_growth_preliminary.py | ammquets
 strong_predation_preliminary.py   | ammquets
 tox.py                            | ammquets
 
+chakrabordy2008(2).py and tox.py were the primary models used in the final version of the project.
+
 ## Background information and conclusions copied from our report
 ### Abstract
 Harmful algae blooms (HABs) are dangerous to humans when consumed through a shellfish vector and have implications for aquatic ecosystems. Management efforts rely on effective prediction of HAB dynamics, including population size and the toxins they produce. We used simulated Pseudo-nitzschia using Euler’s method programs to predict these respective dynamics based on nutrient levels, ratios of silicate to nitrate, and initial phytoplankton and zooplankton population sizes. Our models reflect previous research showing that HAB frequency and size depends heavily on nutrient inflow and zooplankton predation, and that the toxin levels produced depend on reaching a minimum nitrate to silicate threshold. While we recognize that there are many interrelated factors that could influence blooms and were not able to model all of them, our results seem consistent with what we expected based on previous research and knowledge on the subject. 
